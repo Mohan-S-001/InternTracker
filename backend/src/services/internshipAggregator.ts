@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { env } from '../config/env';
 import { Internship } from '../models/Internship';
+import { Company } from '../models/Company';
 
 interface AdzunaResult {
     id: string;
@@ -559,6 +560,43 @@ export class InternshipAggregator {
             }
         }
         console.log(`✅ Seeded ${MNC_SEED_INTERNSHIPS.length} MNC internship listings`);
+        await InternshipAggregator.seedCompanies();
+    }
+
+    // Seed company data from MNC internships
+    static async seedCompanies(): Promise<void> {
+        const MNC_COMPANIES = [
+            { name: 'Google', slug: 'google', industry: 'Technology', headquarters: 'Mountain View, CA', website: 'https://careers.google.com', about: 'Google is a global technology leader focused on improving the ways people connect with information. Products and platforms include Search, Maps, Ads, Gmail, Android, Google Play, and YouTube.', size: '100,000+', founded: 1998, rating: 4.8, techStack: ['Python', 'Go', 'Java', 'C++', 'JavaScript'], benefits: ['Free meals', 'Health insurance', 'Stock options', 'Remote work', 'Learning budget'], culture: ['Innovation', 'Collaboration', 'Data-driven'], averageStipend: '$8,000 - $10,000/month' },
+            { name: 'Microsoft', slug: 'microsoft', industry: 'Technology', headquarters: 'Redmond, WA', website: 'https://careers.microsoft.com', about: 'Microsoft enables digital transformation for the era of an intelligent cloud and an intelligent edge. Its mission is to empower every person and every organization on the planet to achieve more.', size: '100,000+', founded: 1975, rating: 4.7, techStack: ['C#', 'TypeScript', 'Azure', 'Python', '.NET'], benefits: ['Health insurance', 'Stock options', '401k', 'Learning budget', 'Flexible hours'], culture: ['Growth mindset', 'Diversity', 'Inclusion'], averageStipend: '$7,500 - $9,000/month' },
+            { name: 'Amazon', slug: 'amazon', industry: 'Technology / E-commerce', headquarters: 'Seattle, WA', website: 'https://amazon.jobs', about: 'Amazon is guided by four principles: customer obsession, passion for invention, commitment to operational excellence, and long-term thinking. It is the world\'s most customer-centric company.', size: '100,000+', founded: 1994, rating: 4.5, techStack: ['Java', 'Python', 'AWS', 'Go', 'Ruby'], benefits: ['Health insurance', 'RSU', 'Signing bonus', 'Relocation'], culture: ['Customer obsession', 'Ownership', 'Frugality'], averageStipend: '$8,000 - $10,000/month' },
+            { name: 'Meta', slug: 'meta', industry: 'Technology / Social Media', headquarters: 'Menlo Park, CA', website: 'https://metacareers.com', about: 'Meta builds technologies that help people connect, find communities, and grow businesses. Products include Facebook, Instagram, WhatsApp, and the metaverse platform.', size: '50,000+', founded: 2004, rating: 4.6, techStack: ['Python', 'React', 'Hack', 'C++', 'PyTorch'], benefits: ['Free meals', 'Health insurance', 'RSU', 'Remote work'], culture: ['Move fast', 'Be bold', 'Focus on impact'], averageStipend: '$9,000 - $11,000/month' },
+            { name: 'Apple', slug: 'apple', industry: 'Technology / Consumer Electronics', headquarters: 'Cupertino, CA', website: 'https://apple.com/jobs', about: 'Apple is committed to bringing the best user experience to its customers through innovative hardware, software, and services. The company designs, develops, and sells consumer electronics and software.', size: '100,000+', founded: 1976, rating: 4.7, techStack: ['Swift', 'Objective-C', 'Python', 'C++'], benefits: ['Health insurance', 'RSU', 'Product discounts', 'Gym'], culture: ['Excellence', 'Privacy', 'Creativity'], averageStipend: '$7,000 - $9,000/month' },
+            { name: 'Netflix', slug: 'netflix', industry: 'Technology / Entertainment', headquarters: 'Los Gatos, CA', website: 'https://jobs.netflix.com', about: 'Netflix is the world\'s leading streaming entertainment service with over 200 million paid memberships in over 190 countries enjoying TV series, documentaries, and feature films.', size: '10,000+', founded: 1997, rating: 4.6, techStack: ['Java', 'Python', 'React', 'AWS', 'Kafka'], benefits: ['Unlimited PTO', 'Health insurance', 'Top market pay', 'Freedom & Responsibility'], culture: ['Freedom', 'Responsibility', 'High performance'], averageStipend: '$9,000 - $12,000/month' },
+            { name: 'Adobe', slug: 'adobe', industry: 'Technology / Software', headquarters: 'San Jose, CA', website: 'https://adobe.com/careers', about: 'Adobe is a leading global provider of digital media and digital marketing solutions. Its tools and services allow customers to create, manage, deliver, and optimize content across every channel and screen.', size: '25,000+', founded: 1982, rating: 4.5, techStack: ['JavaScript', 'Python', 'Java', 'React', 'Cloud'], benefits: ['Health insurance', 'RSU', 'Wellness programs', 'Learning'], culture: ['Creativity', 'Diversity', 'Integrity'], averageStipend: '$6,500 - $8,000/month' },
+            { name: 'Salesforce', slug: 'salesforce', industry: 'Technology / CRM', headquarters: 'San Francisco, CA', website: 'https://salesforce.com/careers', about: 'Salesforce is the global leader in CRM, helping companies of every size and industry connect with their customers using cloud, AI, social, and mobile technologies.', size: '50,000+', founded: 1999, rating: 4.4, techStack: ['Apex', 'JavaScript', 'Python', 'Heroku'], benefits: ['Health insurance', 'Stock options', 'Volunteer time', 'Learning'], culture: ['Trust', 'Customer success', 'Innovation', 'Equality'], averageStipend: '$6,000 - $7,500/month' },
+            { name: 'IBM', slug: 'ibm', industry: 'Technology / Consulting', headquarters: 'Armonk, NY', website: 'https://ibm.com/careers', about: 'IBM is a leading cloud platform and cognitive solutions company. Its innovations in AI, quantum computing, and hybrid cloud are helping clients transform businesses and society.', size: '100,000+', founded: 1911, rating: 4.2, techStack: ['Java', 'Python', 'Cloud', 'Watson AI'], benefits: ['Health insurance', 'Pension', 'Learning', 'Flex hours'], culture: ['Innovation', 'Trust', 'Responsibility'], averageStipend: '$5,000 - $7,000/month' },
+            { name: 'SAP', slug: 'sap', industry: 'Technology / Enterprise Software', headquarters: 'Walldorf, Germany', website: 'https://sap.com/careers', about: 'SAP is the market leader in enterprise application software. It helps companies of all sizes and in all industries run better. SAP empowers people and organizations to work together more efficiently.', size: '100,000+', founded: 1972, rating: 4.3, techStack: ['ABAP', 'Java', 'JavaScript', 'SAP HANA'], benefits: ['Health insurance', 'Stock plan', 'Remote work', 'Learning'], culture: ['Collaboration', 'Inclusion', 'Purpose'], averageStipend: '$4,500 - $6,500/month' },
+        ];
+
+        for (const companyData of MNC_COMPANIES) {
+            try {
+                await Company.findOneAndUpdate(
+                    { slug: companyData.slug },
+                    {
+                        $set: {
+                            ...companyData,
+                            logo: '', // No external logos
+                            isActive: true,
+                            isVerified: true,
+                        }
+                    },
+                    { upsert: true, new: true }
+                );
+            } catch (err) {
+                // Skip errors silently
+            }
+        }
+        console.log(`✅ Seeded ${MNC_COMPANIES.length} company profiles`);
     }
 
     // Main aggregation function

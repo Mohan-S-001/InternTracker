@@ -13,9 +13,9 @@ interface Company {
     name: string;
     slug: string;
     logo?: string;
-    description: string;
+    about: string;
     industry: string;
-    location: string;
+    headquarters: string;
     rating: number;
     website: string;
 }
@@ -98,12 +98,12 @@ export default function CompaniesPage() {
                                 </div>
 
                                 <p className="text-muted-foreground text-sm line-clamp-2 mb-6 h-10">
-                                    {company.description}
+                                    {company.about}
                                 </p>
 
                                 <div className="flex flex-wrap gap-4 mb-8 text-xs text-muted-foreground font-medium">
                                     <div className="flex items-center gap-1.5">
-                                        <MapPin className="w-3.5 h-3.5" /> {company.location}
+                                        <MapPin className="w-3.5 h-3.5" /> {company.headquarters}
                                     </div>
                                     <div className="flex items-center gap-1.5 text-yellow-500">
                                         <Star className="w-3.5 h-3.5 fill-current" /> {company.rating || '4.5'}

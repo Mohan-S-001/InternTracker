@@ -31,7 +31,7 @@ const companySchema = new Schema<ICompany>(
     {
         name: { type: String, required: true, unique: true, trim: true },
         slug: { type: String, required: true, unique: true, lowercase: true },
-        logo: { type: String, required: true },
+        logo: { type: String, default: '' },
         website: { type: String, required: true },
         about: { type: String, required: true },
         industry: { type: String, required: true },

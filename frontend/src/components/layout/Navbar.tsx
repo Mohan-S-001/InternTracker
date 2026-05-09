@@ -15,7 +15,7 @@ export function Navbar() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const pathname = usePathname();
     const dispatch = useDispatch();
-    const { isAuthenticated, user } = useSelector((state: RootState) => state.auth);
+    const { isAuthenticated, user, isLoading } = useSelector((state: RootState) => state.auth);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -66,7 +66,9 @@ export function Navbar() {
                         </Link>
                     ))}
 
-                    {isAuthenticated ? (
+                    {isLoading ? (
+                        <div className="w-20 h-8 rounded-full bg-white/10 animate-pulse" />
+                    ) : isAuthenticated ? (
                         <div className="flex items-center gap-4">
                             <Link
                                 href="/dashboard"
