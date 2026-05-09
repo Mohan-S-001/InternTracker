@@ -33,8 +33,12 @@ app.use(cors({
         if (env.NODE_ENV === 'development' && /^http:\/\/localhost(:\d+)?$/.test(origin)) {
             return callback(null, true);
         }
-        // In production, check against the configured FRONTEND_URL
-        if (origin === env.FRONTEND_URL) {
+        // Allow all Vercel preview & production deployments
+        if (/\.vercel\.app$/.test(origin)) {
+            return callback(null, true);
+        }
+        // Allow configured FRONTEND_URL (custom domain, etc.)
+        if (env.FRONTEND_URL && origin === env.FRONTEND_URL) {
             return callback(null, true);
         }
         callback(new Error(`CORS: Origin ${origin} not allowed`));
